@@ -1,3 +1,17 @@
+
+ Parameters:
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.
+  KeyPairName:
+    Description: Select Key Pair 
+    Type: AWS::EC2::KeyPair::KeyName  
+
 Mappings: 
   AMIRegionMap: 
     us-east-1: 
@@ -15,8 +29,8 @@ Resources:
             - AMIRegionMap
             - !Ref AWS::Region
             - AMI
-          KeyName: !Ref KeyName
-          InstanceType: !Ref InstanceType
+          KeyName: !Ref KeyPairName
+          InstanceType: !Ref InstanceTypeParameter
           Tags:
             - 
               Key: Env
