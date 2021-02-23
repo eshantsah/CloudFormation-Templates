@@ -1,0 +1,48 @@
+Mappings: 
+  AMIRegionMap: 
+    us-east-1: 
+      AMI: "ami-0ff8a91507f77f867"
+    us-east-2: 
+      AMI: "ami-0bdb828fd58c52235"
+    us-west-1: 
+      AMI: "ami-047bb4163c506cd98"
+    
+Resources:
+  EC2Instance:
+      Type: AWS::EC2::Instance
+      Properties:
+          ImageId: !FindInMap
+            - AMIRegionMap
+            - !Ref AWS::Region
+            - AMI
+          KeyName: !Ref KeyName
+          InstanceType: !Ref InstanceType
+          Tags:
+            - 
+              Key: Env
+              Value: !Join ["-", [DEV, Environment]]
+          SecurityGroups:
+          - !Ref Ec2SecurityGroup
+          BlockDeviceMappings:
+          -
+            DeviceName: /dev/sda1
+            Ebs:
+              VolumeSize: 50
+          -
+            DeviceName: /dev/sdm
+            Ebs:
+              VolumeSize: 100
+  Ec2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+      - CidrIp: 0.0.0.0/0
+        FromPort: 22
+        IpProtocol: tcp
+        ToPort: 22
+      - CidrIp: 0.0.0.0/0
+        FromPort: 80
+        IpProtocol: tcp
+        ToPort: 80
